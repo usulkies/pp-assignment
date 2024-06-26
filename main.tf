@@ -14,16 +14,19 @@ provider "kubernetes" {
   client_key             = module.minikube_cluster.client_key
   cluster_ca_certificate = module.minikube_cluster.cluster_ca_certificate
 }
+
 module "webapp" {
+  for_each = var.web_applications_stacks
   providers = {
     kubernetes = kubernetes
   }
-  source                    = "./modules/webapp"
-  webapp_name               = var.webapp_name
-  webapp_namespace          = var.webapp_namespace
-  webapp_replicas           = var.webapp_replicas
-  minikube_cluster_name     = var.minikube_cluster_name
-  create_localhost_endpoint = var.create_localhost_endpoint
+  source                            = "./modules/webapp"
+  webapp_name                       = each.value.name
+  webapp_namespace                  = each.value.namespace
+  webapp_replicas                   = each.value.replicas
+  create_namespace                  = each.value.create_namespace
+  minikube_cluster_name             = var.minikube_cluster_name
+  create_localhost_service_endpoint = var.create_localhost_service_endpoint
 }
 
 

@@ -1,7 +1,19 @@
-minikube_driver           = "docker"
-minikube_cluster_name     = "my-minikube"
-minikube_cluster_nodes    = 2
-webapp_replicas           = 12
-webapp_name               = "my-default-webapp"
-create_localhost_endpoint = true
-webapp_namespace          = "default"
+minikube_driver                   = "docker"
+minikube_cluster_name             = "my-minikube"
+minikube_cluster_nodes            = 2
+create_localhost_service_endpoint = true
+web_applications_stacks = {
+  default = {
+    name                              = "my-default-webapp"
+    namespace                         = "default"
+    replicas                          = 12
+    create_localhost_service_endpoint = true
+  }
+  another-app = {
+    name                              = "my-other-webapp"
+    namespace                         = "my-another-namespace"
+    replicas                          = 3
+    create_localhost_service_endpoint = true
+    create_namespace                  = true
+  }
+}

@@ -23,8 +23,9 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [kubernetes_deployment.static_webapp](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment) | resource |
-| [kubernetes_service.static_webapp](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
+| [kubernetes_deployment.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment) | resource |
+| [kubernetes_namespace_v1.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace_v1) | resource |
+| [kubernetes_service.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
 | [null_resource.run_minikube_tunnel](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [local_file.minikube_tunnel_url](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 
@@ -32,7 +33,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_create_localhost_endpoint"></a> [create\_localhost\_endpoint](#input\_create\_localhost\_endpoint) | Whether to create a localhost endpoint | `bool` | `false` | no |
+| <a name="input_create_localhost_service_endpoint"></a> [create\_localhost\_service\_endpoint](#input\_create\_localhost\_service\_endpoint) | Whether to create a localhost endpoint | `bool` | `false` | no |
+| <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Whether to create the namespace | `bool` | `false` | no |
 | <a name="input_minikube_cluster_name"></a> [minikube\_cluster\_name](#input\_minikube\_cluster\_name) | The name of the minikube cluster | `string` | `"minikube"` | no |
 | <a name="input_nginx_image_tag"></a> [nginx\_image\_tag](#input\_nginx\_image\_tag) | The image to use for the webapp | `string` | `"latest"` | no |
 | <a name="input_webapp_name"></a> [webapp\_name](#input\_webapp\_name) | Name of the webapp | `string` | `"webapp"` | no |

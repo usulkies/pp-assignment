@@ -1,4 +1,10 @@
-resource "kubernetes_deployment" "static_webapp" {
+resource "kubernetes_namespace_v1" "this" {
+  count = var.create_namespace ? 1 : 0
+  metadata {
+    name = var.webapp_namespace
+  }
+}
+resource "kubernetes_deployment" "this" {
   metadata {
     name      = var.webapp_name
     namespace = var.webapp_namespace
@@ -56,9 +62,10 @@ resource "kubernetes_deployment" "static_webapp" {
       }
     }
   }
+  depends_on = [kubernetes_namespace_v1.this]
 }
 
-resource "kubernetes_service" "static_webapp" {
+resource "kubernetes_service" "this" {
   metadata {
     name      = var.webapp_name
     namespace = var.webapp_namespace
@@ -67,7 +74,7 @@ resource "kubernetes_service" "static_webapp" {
   spec {
     type = "NodePort"
     selector = {
-      app = kubernetes_deployment.static_webapp.metadata.0.name
+      app = kubernetes_deployment.this.metadata.0.name
     }
     port {
       port        = 8080
@@ -75,22 +82,23 @@ resource "kubernetes_service" "static_webapp" {
       name        = "http"
     }
   }
+  depends_on = [kubernetes_deployment.this]
 }
 
 locals {
-  url_file_name = "url.txt"
+  url_file_name = "url-${var.minikube_cluster_name}-${var.webapp_name}.txt"
 }
 
 resource "null_resource" "run_minikube_tunnel" {
-  count = var.create_localhost_endpoint ? 1 : 0
+  count = var.create_localhost_service_endpoint ? 1 : 0
   triggers = {
-    service_name = kubernetes_service.static_webapp.metadata.0.name
+    service_name = kubernetes_service.this.metadata.0.name
     time         = timestamp()
   }
   provisioner "local-exec" {
     command = <<-EOT
-      rm ${local.url_file_name}
-      minikube -p ${var.minikube_cluster_name} service ${kubernetes_service.static_webapp.metadata.0.name} --url 2>/dev/null >> ${local.url_file_name} &
+      rm ${local.url_file_name} || true
+      minikube -p ${var.minikube_cluster_name} service ${kubernetes_service.this.metadata.0.name} -n ${var.webapp_namespace} --url 2>/dev/null >> ${local.url_file_name} &
       # Wait until file contains a URL
       while ! grep -q "http" "${local.url_file_name}" ; do
         echo "Waiting for URL..."
@@ -100,13 +108,13 @@ resource "null_resource" "run_minikube_tunnel" {
   }
 
   depends_on = [
-    kubernetes_deployment.static_webapp,
-    kubernetes_service.static_webapp,
+    kubernetes_deployment.this,
+    kubernetes_service.this,
   ]
 }
 
 data "local_file" "minikube_tunnel_url" {
-  count      = var.create_localhost_endpoint ? 1 : 0
+  count      = var.create_localhost_service_endpoint ? 1 : 0
   filename   = local.url_file_name
   depends_on = [null_resource.run_minikube_tunnel]
 }

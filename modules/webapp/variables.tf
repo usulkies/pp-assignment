@@ -10,6 +10,12 @@ variable "webapp_namespace" {
   default     = "default"
 }
 
+variable "create_namespace" {
+  description = "Whether to create the namespace"
+  type        = bool
+  default     = false
+}
+
 variable "nginx_image_tag" {
   description = "The image to use for the webapp"
   type        = string
@@ -40,7 +46,7 @@ variable "minikube_cluster_name" {
   default     = "minikube"
 }
 
-variable "create_localhost_endpoint" {
+variable "create_localhost_service_endpoint" {
   description = "Whether to create a localhost endpoint"
   type        = bool
   default     = false
