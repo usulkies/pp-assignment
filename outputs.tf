@@ -1,3 +1,3 @@
 output "minikube_tunnel_url" {
-  value = trimspace(data.local_file.minikube_tunnel_url.content)
+  value = var.create_localhost_endpoint ? module.webapp.minikube_tunnel_url : null
 }
