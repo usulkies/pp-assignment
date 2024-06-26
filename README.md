@@ -1,5 +1,5 @@
 # PP Assignment
-Automating Infrastructure with Terraform
+## Automating Infrastructure with Terraform
 
 This project provides a Terraform solution for setting up a Minikube cluster and deploying web applications on it. The solution has been tested with the Docker driver, which should be installed on your system. Additionally, Minikube must be installed according to the instructions provided at [Minikube Start Guide](https://minikube.sigs.k8s.io/docs/start).
 
