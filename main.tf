@@ -1,11 +1,11 @@
 resource "minikube_cluster" "minikube" {
   driver       = var.minikube_driver
-  cluster_name = "my-minikube-cluster"
+  cluster_name = var.cluster_name
   addons = [
-    "ingress", "ingress-dns", "default-storageclass",
+    "default-storageclass",
     "storage-provisioner"
   ]
-  nodes = 3
+  nodes = var.cluster_nodes
 }
 
 provider "kubernetes" {
@@ -92,17 +92,34 @@ resource "kubernetes_service" "static_webapp" {
   }
 }
 
+locals {
+  url_file_name = "url.txt"
+
+}
 resource "null_resource" "run_minikube_tunnel" {
+  triggers = {
+    service_name = kubernetes_service.static_webapp.metadata.0.name
+    time         = timestamp()
+  }
   provisioner "local-exec" {
     command = <<-EOT
-      set -x
-
-      # Run minikube tunnel with the profile name
-      minikube -p my-minikube-cluster service ${kubernetes_service.static_webapp.metadata.0.name} > minikube_tunnel.log 2>&1 &
+      rm ${local.url_file_name}
+      minikube -p ${var.cluster_name} service ${kubernetes_service.static_webapp.metadata.0.name} --url 2>/dev/null >> ${local.url_file_name} &
+      # Wait until file contains a URL
+      while ! grep -q "http" "${local.url_file_name}" ; do
+        echo "Waiting for URL..."
+        sleep 1
+      done
     EOT
   }
 
   depends_on = [
     kubernetes_deployment.static_webapp,
-    kubernetes_service.static_webapp,]
+    kubernetes_service.static_webapp,
+  ]
+}
+
+data "local_file" "minikube_tunnel_url" {
+  filename   = local.url_file_name
+  depends_on = [null_resource.run_minikube_tunnel]
 }

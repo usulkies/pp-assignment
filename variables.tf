@@ -7,4 +7,17 @@ variable "minikube_driver" {
 variable "webapp_replicas" {
   type        = number
   description = "The number of replicas for the webapp deployment"
+  default     = 3
+}
+
+variable "cluster_name" {
+  type        = string
+  description = "The name of the minikube cluster"
+  default     = "my-minikube-cluster"
+}
+
+variable "cluster_nodes" {
+  type        = number
+  description = "The number of nodes for the minikube cluster"
+  default     = 1
 }
