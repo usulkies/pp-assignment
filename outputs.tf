@@ -5,4 +5,5 @@ output "application_services_local_endpoints" {
       url  = var.create_localhost_service_endpoint ? module.webapp[k].minikube_tunnel_url : null
     }
   }
+  description = "The local endpoints for each application service"
 }
