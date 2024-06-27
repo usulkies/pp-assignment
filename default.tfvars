@@ -9,11 +9,11 @@ web_applications_stacks = {
     replicas                          = 12
     create_localhost_service_endpoint = true
   }
-  another-app = {
-    name                              = "my-other-webapp"
-    namespace                         = "my-another-namespace"
-    replicas                          = 3
-    create_localhost_service_endpoint = true
-    create_namespace                  = true
-  }
+#   bonus-app = {
+#     name                              = "my-bonus-webapp"
+#     namespace                         = "my-bonus-namespace"
+#     replicas                          = 3
+#     create_localhost_service_endpoint = true
+#     create_namespace                  = true
+#   }
 }
