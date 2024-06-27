@@ -1,4 +1,4 @@
-minikube_driver                   = "docker"
+minikube_driver                   = "podman"
 minikube_cluster_name             = "my-minikube"
 minikube_cluster_nodes            = 2
 create_localhost_service_endpoint = true

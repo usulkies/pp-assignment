@@ -19,6 +19,22 @@ Please note that the configuration and deployment details may vary based on your
 
 For more detailed information about the modules, resources, inputs, and outputs of this Terraform project, please refer to the auto-generated documentation below.
 
+## Exercise Considerations
+### Set up a local Kubernetes cluster (minikube, k3d, kind, etc.).
+* I chose minikube, and found a terraform provider for it.
+### Deploy N basic web application servers, each serving a single static page and responding with the pod name/IP address.
+* I created a module for deploying web applications. The module creates a deployment and a service for each web application. The deployment uses a simple Nginx image that serves a static page with the pod name.<br>
+* I used init container to change the index.html file to include the pod name during pod startup.<br>
+* I could have used a postStart lifecycle hook, but I wanted to try the init container approach which demonstrated also the use of volumes.
+### Establish an endpoint accessible locally that dynamically directs traffic to different web application servers upon access. The endpoint should route traffic exclusively to pods capable of responding.
+* I used a service of type NodePort to expose the web applications in the cluster.<br>
+* I used the minikube tunnel command to expose the services on localhost, but this required having minikube installed on the local machine.<br>
+* I added a readiness probe to the web application pods to ensure that only the pods capable of responding receive traffic.
+### Bonus: Implement an additional application stack with minimal additional lines of code.
+* I created the stack resources as a reusable module, which can be used to deploy additional web applications with minimal additional lines of code.
+* In my main configuration, I defined a default web application stack and allowed the user to define additional web application stacks in the input variables.
+* I might have used a simple "count" to deploy multiple web applications, but I wanted to demonstrate the use of modules and input variables for reusability and flexibility.
+* The current solution can be leveraged to use terraform workspaces to deploy multiple environments with different web applications, but the kubernetes provider credentials would need to be managed accordingly, if to deploy on the same cluster.
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
